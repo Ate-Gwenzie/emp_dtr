@@ -1,6 +1,5 @@
 <?php
 session_start();
-// The file is likely located here, based on your previous code context
 require_once '../classes/database.php';
 require_once '../classes/employee.php';
 require_once '../classes/password.php';
@@ -26,7 +25,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $confirm_password = trim(htmlspecialchars($_POST['confirm_password'] ?? ''));
     $csrf_token = $_POST['csrf_token'] ?? '';
 
-    // 1. Validation
     if ($csrf_token !== $_SESSION['csrf_token']) {
         $errors[] = "Invalid request token.";
     } elseif (empty($email) || empty($reason) || empty($new_password) || empty($confirm_password)) {
@@ -39,9 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors[] = "New passwords do not match.";
     }
     
-    // 2. Employee and Request Check
     if (empty($errors)) {
-        // Retrieve employee ID using the Employee class
         $empData = $employee->getEmployeeByEmail($email); 
 
         if (!$empData) {
@@ -51,18 +47,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $employee_name = $empData['fname_emp'] . ' ' . $empData['lname_emp'];
             $employee_sys_id = $empData['employee_id']; 
             
-            // Check for existing pending request using the PasswordRequest class
             if ($requestManager->hasPendingRequest($empid)) { 
                 $errors[] = "You already have a pending password reset request. Please wait for an administrator to respond.";
             } else {
-                // 3. Create Request and Notify Admin
                 try {
                     $new_hash = password_hash($new_password, PASSWORD_DEFAULT);
                     
-                    // Create the request
                     $requestManager->createRequest($empid, $email, $reason, $new_hash);
 
-                    // --- ADMIN NOTIFICATION START ---
                     $notifManager = new Notification();
                     $adminManager = new Admin();
                     $admins = $adminManager->viewAdmin();
@@ -70,9 +62,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     
                     $emailSubject = "ACTION REQUIRED: New Password Reset Request";
                     
-                    // REMOVED: $avatarUrl definition
-
-                    // 1. Generate Plain Text Body (for in-app notification and email fallback)
                     $notification_message_text = "New Password Reset Request submitted:\n"
                                           . "--------------------------------\n"
                                           . "Employee Name: " . $employee_name . "\n"
@@ -82,7 +71,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                           . "--------------------------------\n"
                                           . "\nAction Required: Please review this request in the Admin Panel.";
 
-                    // 2. Generate HTML Body for Email (Image block removed)
                     $notification_message_html = "
                     <html>
                     <body style='font-family: Arial, sans-serif; background-color: #f4f7f6; padding: 20px;'>
@@ -115,9 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </html>
                     ";
 
-                    
                     foreach ($admins as $admin) {
-                        // 1. In-App Notification (Uses plain text)
                         $notifManager->recordNotification(
                             'admin', 
                             $admin['adid'], 
@@ -125,15 +111,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $notification_message_text
                         );
                         
-                        // 2. Email Notification (Uses detailed HTML body and plain text fallback)
                         $emailSender->sendEmail(
                             $admin['email_ad'],
                             $emailSubject, 
-                            $notification_message_html, // HTML Body
-                            $notification_message_text  // Plain Text Body (Fallback)
+                            $notification_message_html, 
+                            $notification_message_text  
                         );
                     }
-                    // --- ADMIN NOTIFICATION END ---
 
                     $_SESSION['request_status_message'] = "Password change request submitted successfully! Your new password will be applied once the administrator confirms your request.";
                     header("Location: login.php");
@@ -199,10 +183,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 5px; 
             padding: 10px; 
         }
-        /* FIX: Applying Dark Red Brand Color to the Button */
         .btn-primary { 
-            background-color: #8b0000; /* Dark Red */
-            color: white; /* White text for contrast */
+            background-color: #8b0000; 
+            color: white; 
             padding: 10px 30px; 
             border-radius: 50px; 
             font-size: 1.1rem; 
@@ -213,8 +196,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             transition: background-color 0.3s, transform 0.3s, color 0.3s;
         }
         .btn-primary:hover { 
-            background-color: #a80000; /* Slightly lighter red on hover */
-            color: #ffc107; /* Yellow hover text */
+            background-color: #a80000;
+            color: #ffc107; 
             transform: scale(1.03); 
         }
         .alert { 
