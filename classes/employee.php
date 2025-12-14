@@ -12,21 +12,14 @@ class Employee {
         return $this->db->getConnection();
     }
 
-    /**
-     * Retrieves employee data by email address.
-     * @param string $email The email address to search for.
-     * @return array|false Associative array of employee data (empid, employee_id, fname_emp, lname_emp) or false if not found.
-     */
     public function getEmployeeByEmail($email) {
         $conn = $this->db->getConnection();
-        // Fetch necessary columns: empid, employee_id, and names for notification
         $stmt = $conn->prepare("SELECT empid, employee_id, fname_emp, lname_emp FROM employee WHERE email_emp = :email");
         $stmt->bindParam(':email', $email);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // MODIFIED: Accept optional $verification_token and $is_verified
     public function addEmployee($password_hash, $verification_token = null, $is_verified = 0) {
         $conn = $this->db->getConnection();
         
@@ -40,7 +33,6 @@ class Employee {
 
             $new_user_id = $conn->lastInsertId();
 
-            // MODIFIED: Added verification_token and is_verified fields
             $stmt_emp = $conn->prepare("INSERT INTO employee (employee_id, fname_emp, lname_emp, email_emp, position, pass_emp, timein_am, timeout_am, timein_pm, timeout_pm, user_id, verification_token, is_verified) 
             VALUES (:eid, :fname, :lname, :email, :pos, :pass_hash_compat, :tin_am, :tout_am, :tin_pm, :tout_pm, :user_id, :token, :is_verified)");
             
@@ -55,7 +47,6 @@ class Employee {
             $stmt_emp->bindParam(':tin_pm', $this->timein_pm);
             $stmt_emp->bindParam(':tout_pm', $this->timeout_pm);
             $stmt_emp->bindParam(':user_id', $new_user_id);
-            // token could be null; bind it accordingly
             if (is_null($verification_token)) {
                 $stmt_emp->bindValue(':token', null, PDO::PARAM_NULL);
             } else {
@@ -103,7 +94,6 @@ class Employee {
 
     public function fetchEmployee($empid) {
         $conn = $this->db->getConnection();
-        // MODIFIED: Select is_verified
         $stmt = $conn->prepare("SELECT *, is_verified FROM employee WHERE empid = :empid");
         $stmt->bindParam(':empid', $empid);
         $stmt->execute();
@@ -168,9 +158,6 @@ class Employee {
         return $result['count'];
     }
 
-    /**
-     * NEW: Handles verifying the account via token provided in the email.
-     */
     public function verifyAccount($email, $token) {
         $conn = $this->db->getConnection();
         
@@ -182,7 +169,6 @@ class Employee {
         $employee = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($employee) {
-            // Mark as verified and clear token
             $update_stmt = $conn->prepare("UPDATE employee SET is_verified = 1, verification_token = NULL WHERE empid = :empid");
             $update_stmt->bindParam(':empid', $employee['empid']);
             $update_stmt->execute();
