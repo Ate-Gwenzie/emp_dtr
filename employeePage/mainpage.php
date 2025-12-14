@@ -179,7 +179,6 @@ $disable_time_out_pm = $pm_out_disabled_seq || $pm_disabled_time || $pending_pm_
     <title>Employee Main Page</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Modernized Styles */
         :root {
             --sys-red: #8b0000;
             --sys-red-light: #dc3545;
@@ -249,7 +248,6 @@ $disable_time_out_pm = $pm_out_disabled_seq || $pm_disabled_time || $pending_pm_
             margin-bottom: 20px;
         }
         
-        /* General button styles */
         .btn {
             font-weight: 600;
             transition: all 0.2s;
@@ -266,7 +264,6 @@ $disable_time_out_pm = $pm_out_disabled_seq || $pm_disabled_time || $pending_pm_
             font-size: 1rem;
         }
         
-        /* Time Action Buttons */
         .btn-time-action { 
             background-color: var(--sys-red);
             color: white; 
@@ -284,7 +281,6 @@ $disable_time_out_pm = $pm_out_disabled_seq || $pm_disabled_time || $pending_pm_
             transform: none;
         }
 
-        /* Request Button */
         .btn-request { 
             background-color: var(--sys-yellow); 
             color: black; 
@@ -296,7 +292,6 @@ $disable_time_out_pm = $pm_out_disabled_seq || $pm_disabled_time || $pending_pm_
             transform: translateY(-2px); 
         }
         
-        /* History Button */
         .btn-history {
             background-color: #007bff;
             color: white;
@@ -311,7 +306,6 @@ $disable_time_out_pm = $pm_out_disabled_seq || $pm_disabled_time || $pending_pm_
             transform: translateY(-2px);
         }
         
-        /* Utility styles */
         .alert { 
             padding: 15px; 
             margin-bottom: 20px; 
@@ -361,7 +355,6 @@ $disable_time_out_pm = $pm_out_disabled_seq || $pm_disabled_time || $pending_pm_
             transform: translateY(-1px);
         }
         
-        /* SVG Icons */
         .icon-btn {
             width: 20px;
             height: 20px;
@@ -371,7 +364,6 @@ $disable_time_out_pm = $pm_out_disabled_seq || $pm_disabled_time || $pending_pm_
             vertical-align: middle;
         }
 
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .dashboard-section {
                 padding: 20px;
@@ -382,9 +374,8 @@ $disable_time_out_pm = $pm_out_disabled_seq || $pm_disabled_time || $pending_pm_
             .section-header {
                 font-size: 1.2rem;
             }
-            /* Bootstrap handles col-md-6, but for custom elements: */
             .action-grid {
-                grid-template-columns: 1fr 1fr; /* Two columns on tablets/small desktops */
+                grid-template-columns: 1fr 1fr;
             }
             .btn {
                 padding: 12px 8px;
@@ -394,7 +385,7 @@ $disable_time_out_pm = $pm_out_disabled_seq || $pm_disabled_time || $pending_pm_
         
         @media (max-width: 480px) {
              .action-grid {
-                grid-template-columns: 1fr; /* Single column on smallest screens */
+                grid-template-columns: 1fr; 
             }
         }
 
@@ -549,12 +540,11 @@ $disable_time_out_pm = $pm_out_disabled_seq || $pm_disabled_time || $pending_pm_
     <script>
         function updateTime() {
             const now = new Date();
-            // Use military time for consistency with PHP backend
             const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
             document.getElementById('live-time').textContent = timeString;
             document.getElementById('modal-requested-time').value = timeString; 
         }
-        updateTime(); // Run once immediately
+        updateTime(); 
         setInterval(updateTime, 1000);
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -569,7 +559,6 @@ $disable_time_out_pm = $pm_out_disabled_seq || $pm_disabled_time || $pending_pm_
             const modal = new bootstrap.Modal(modalElement);
             
             window.openEarlyRequestModal = function(sessionType) {
-                // Update the current time field immediately before showing the modal
                 updateTime();
                 
                 document.getElementById('session-type').textContent = sessionType;
@@ -594,12 +583,11 @@ $disable_time_out_pm = $pm_out_disabled_seq || $pm_disabled_time || $pending_pm_
                 this.disabled = true;
                 this.textContent = 'Submitting...';
                 
-                // Manually append the action type for the request handler
                 formData.append('action', 'submit_early_timeout'); 
                 
                 fetch('request_handler.php', {
                     method: 'POST',
-                    body: new URLSearchParams(formData) // Use URLSearchParams for application/x-www-form-urlencoded
+                    body: new URLSearchParams(formData) 
                 })
                 .then(response => {
                     const contentType = response.headers.get("content-type");
