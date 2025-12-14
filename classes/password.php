@@ -8,11 +8,6 @@ class PasswordRequest {
         $this->db = new Database();
     }
     
-    /**
-     * Checks if a specific employee already has a pending password reset request.
-     * @param int $emp_id The ID of the employee.
-     * @return bool True if a pending request exists, false otherwise.
-     */
     public function hasPendingRequest($emp_id) {
         $conn = $this->db->getConnection();
         $stmt = $conn->prepare("SELECT COUNT(*) FROM password_reset_requests WHERE employee_id = :emp_id AND status = 'Pending'");
@@ -59,4 +54,3 @@ class PasswordRequest {
         return $stmt->execute();
     }
 }
-// Removed the extra closing curly brace here
