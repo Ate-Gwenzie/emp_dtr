@@ -8,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <style>
         
-        /* Define modern colors */
         :root {
             --sys-red: #8b0000;
             --sys-red-light: #dc3545;
@@ -27,7 +26,6 @@
             padding: 0;
         }
 
-        /* --- Global Structure and Header --- */
         .main-header {
             position: fixed;
             top: 0;
@@ -71,16 +69,15 @@
             color: var(--sys-red);
         }
 
-        /* NEW: Styles for SVG icons */
         .icon-sm {
-            width: 18px; /* Standard size for sidebar icons */
+            width: 18px; 
             height: 18px;
-            fill: none; /* Default for stroke icons */
-            stroke: currentColor; /* Inherit color from parent */
+            fill: none; 
+            stroke: currentColor; 
             stroke-width: 2;
             stroke-linecap: round;
             stroke-linejoin: round;
-            flex-shrink: 0; /* Important to prevent resizing in flex containers */
+            flex-shrink: 0;
         }
         .main-header .user-info .icon-sm {
             width: 20px;
@@ -88,8 +85,6 @@
             color: var(--sys-yellow);
         }
 
-
-        /* --- Fixed Left Sidebar --- */
         .main-sidebar {
             width: 250px;
             position: fixed;
@@ -112,9 +107,9 @@
 
         .sidebar-menu li a {
             display: flex;
-            justify-content: flex-start; /* Changed to start */
+            justify-content: flex-start;
             align-items: center;
-            gap: 10px; /* Added gap for icon spacing */
+            gap: 10px; 
             padding: 12px 15px;
             color: #c0c0c0;
             text-decoration: none;
@@ -123,7 +118,7 @@
             font-weight: 500;
             font-size: 0.95rem;
         }
-        .sidebar-menu li a > span:last-child { /* Targets the pending indicator for float right */
+        .sidebar-menu li a > span:last-child {
             margin-left: auto;
         }
 
@@ -142,10 +137,7 @@
             font-size: 0.75rem;
             font-weight: bold;
             line-height: 1;
-            /* margin-left: auto; /* Handled by a:last-child */
         }
-
-        /* --- Main Content Area --- */
         .content-wrapper {
             margin-left: 250px; 
             padding: 30px;
@@ -160,7 +152,6 @@
             margin-bottom: 25px;
         }
         
-        /* --- Info Box Widgets (Top Row) --- */
         .info-box {
             border-radius: 8px;
             margin-bottom: 25px;
@@ -202,31 +193,28 @@
         .info-box-icon {
             font-size: 2.5rem;
             opacity: 0.7;
-            /* Update to support SVG */
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .info-box-icon .icon-lg {
-            width: 40px; /* Larger size for info box icons */
+            width: 40px; 
             height: 40px;
-            color: white; /* Ensure color is white for info boxes */
+            color: white; 
             stroke: currentColor;
             stroke-width: 2;
             fill: none;
         }
-        
-        /* Custom Widget Colors (Modernized Gradients) */
+      
         .bg-red-system { background: linear-gradient(135deg, #a00000 0%, var(--sys-red) 100%); }
         .bg-danger { background: linear-gradient(135deg, #e3342f 0%, var(--sys-red-light) 100%); }
         .bg-blue-system { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); }
         .bg-yellow-system { background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); color: #333; }
         .bg-yellow-system .info-box-number, 
         .bg-yellow-system .info-box-text { color: var(--sys-dark-bg); } 
-        .bg-yellow-system .info-box-icon .icon-lg { color: var(--sys-dark-bg); } /* Target the SVG directly */
+        .bg-yellow-system .info-box-icon .icon-lg { color: var(--sys-dark-bg); } 
         .bg-yellow-system .info-box-link { color: var(--sys-dark-bg); }
         
-        /* --- Chart Styling --- */
         .chart-widget {
             background-color: white;
             border-radius: 8px;
