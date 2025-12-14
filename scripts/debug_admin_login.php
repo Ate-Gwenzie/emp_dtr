@@ -1,8 +1,5 @@
 <?php
-/**
- * Usage: php debug_admin_login.php [email] [password]
- * If email/password not provided, lists admin users.
- */
+
 require_once __DIR__ . '/../classes/database.php';
 
 $email = $argv[1] ?? null;
@@ -29,7 +26,6 @@ if ($email && $password) {
     $ok_user = password_verify($password, $user_hash);
     echo "Password verify vs admin.pass_ad: " . ($ok_ad ? 'OK' : 'MISMATCH') . "\n";
     echo "Password verify vs users.password: " . ($ok_user ? 'OK' : 'MISMATCH') . "\n";
-    // Email verification check
     $stmt2 = $conn->prepare("SELECT verified FROM email_verifications WHERE user_id = :uid ORDER BY created_at DESC LIMIT 1");
     $uid = $row['user_id'] ?? null;
     $stmt2->bindParam(':uid', $uid);
