@@ -4,22 +4,18 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-// Preferred: autoload from Composer (vendor). Fallbacks below.
 if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require_once __DIR__ . '/../vendor/autoload.php';
 } else if (file_exists(__DIR__ . '/../vendor/phpmailer/phpmailer/src/PHPMailer.php')) {
-    // PHPMailer present in vendor but Composer autoload is missing - load PHPMailer files directly
     require_once __DIR__ . '/../vendor/phpmailer/phpmailer/src/Exception.php';
     require_once __DIR__ . '/../vendor/phpmailer/phpmailer/src/PHPMailer.php';
     require_once __DIR__ . '/../vendor/phpmailer/phpmailer/src/SMTP.php';
 } else {
-    // If composer isn't installed, try a local PHPMailer (if ever bundled here), otherwise gracefully degrade
     if (file_exists(__DIR__ . '/phpMailer/src/Exception.php')) require_once __DIR__ . '/phpMailer/src/Exception.php';
     if (file_exists(__DIR__ . '/phpMailer/src/PHPMailer.php')) require_once __DIR__ . '/phpMailer/src/PHPMailer.php';
     if (file_exists(__DIR__ . '/phpMailer/src/SMTP.php')) require_once __DIR__ . '/phpMailer/src/SMTP.php';
 }
-// load our Notification class; config is loaded by the EmailSender constructor
-require_once __DIR__ . '/notification.php'; // Load the Notification class
+require_once __DIR__ . '/notification.php'; 
 
 class EmailSender {
     private $cfg = [];
@@ -37,17 +33,12 @@ class EmailSender {
             }
         }
     }
-
-    /**
-     * Configures and returns a fully initialized PHPMailer instance.
-     */
     protected function createMailer() {
         $mail = new PHPMailer(true); // Enable exceptions
 
         try {
-            // Server settings
-            $mail->SMTPDebug = !empty($this->cfg['smtp_debug']) ? SMTP::DEBUG_SERVER : SMTP::DEBUG_OFF; // Set debug if configured
-            // If config requests the use of SMTP and the keys exist, configure PHPMailer as SMTP
+            $mail->SMTPDebug = !empty($this->cfg['smtp_debug']) ? SMTP::DEBUG_SERVER : SMTP::DEBUG_OFF; 
+          
             if (!empty($this->cfg['use_smtp'])) {
                 $mail->isSMTP();
                 $mail->Host       = $this->cfg['smtp_host'] ?? 'localhost';
@@ -58,7 +49,6 @@ class EmailSender {
                 $mail->Port       = $this->cfg['smtp_port'] ?? 587;
             }
 
-            // Sender settings
             $mail->CharSet = 'UTF-8';
             $from_email = $this->cfg['from_email'] ?? ($this->cfg['from'] ?? 'noreply@localhost');
             $from_name  = $this->cfg['from_name'] ?? ($this->cfg['from_name'] ?? 'DTR System');
@@ -71,24 +61,14 @@ class EmailSender {
             return null;
         }
     }
-
-    /**
-     * Sends a general email, allowing explicit plain text content.
-     * This replaces the old protected send() method and fixes the fatal error.
-     * * @param string $recipientEmail
-     * @param string $subject
-     * @param string $bodyHtml HTML body content
-     * @param string|null $bodyText Optional plain text alternative. If null, it's stripped from HTML body.
-     * @return bool True on success
-     */
     public function sendEmail($recipientEmail, $subject, $bodyHtml, $bodyText = null) {
         $mail = $this->createMailer();
 
         if (is_null($mail)) {
-            // Fallback to simple Mailer wrapper if PHPMailer isn't available
+         
             if (file_exists(__DIR__ . '/mailer.php')) {
                 require_once __DIR__ . '/mailer.php';
-                // Pass both HTML and Text body to the fallback mailer
+             
                 return Mailer::send($recipientEmail, $subject, $bodyHtml, $bodyText ?: strip_tags($bodyHtml));
             }
             return false;
@@ -99,7 +79,7 @@ class EmailSender {
             $mail->isHTML(true);
             $mail->Subject = $subject;
             $mail->Body    = $bodyHtml;
-            // Use provided plain text body, otherwise strip tags from HTML body
+            
             $mail->AltBody = $bodyText ?: strip_tags($bodyHtml); 
             
             $mail->send();
@@ -109,11 +89,10 @@ class EmailSender {
             $this->lastError = $err;
             error_log("PHPMailer Send Error to {$recipientEmail}: {$err}");
             
-            // Fallback: use the simple Mailer wrapper if available
             if (file_exists(__DIR__ . '/mailer.php')) {
                 require_once __DIR__ . '/mailer.php';
                 try {
-                    // Pass both HTML and Text body to the fallback mailer
+                    
                     $fb = Mailer::send($recipientEmail, $subject, $bodyHtml, $bodyText ?: strip_tags($bodyHtml));
                     if (!$fb) {
                         $this->lastError = 'Mailer fallback failed';
@@ -129,19 +108,14 @@ class EmailSender {
         }
     }
     
-    // REMOVED: The old protected function send() is no longer needed.
-
     public function getLastError() {
             return $this->lastError;
         }
 
-    /**
-     * Internal helper function to log the notification to the database.
-     */
     protected function logNotification($recipient_type, $recipient_id, $notification_type, $subject, $body) {
         try {
             $notificationManager = new Notification();
-            // Use the email subject and strip HTML tags from the body for the notification message
+           
             $message = "Subject: {$subject}\n" . strip_tags(str_replace('<br>', "\n", $body));
             return $notificationManager->recordNotification($recipient_type, $recipient_id, $notification_type, $message);
         } catch (\Exception $e) {
@@ -149,16 +123,13 @@ class EmailSender {
             return false;
         }
     }
-
-    // MODIFIED: Updated to call sendEmail()
     public function sendWelcomeEmail($recipientEmail, $name, $empid, $verification_token = null) {
-        // Prefer a configured base URL in config/email_config.php; otherwise fallback to the placeholder
+       
         $baseUrl = $this->cfg['base_url'] ?? 'http://YOUR_BASE_URL/emp_dtr';
         $verification_url = rtrim($baseUrl, '/') . '/user/verify.php?email=' . urlencode($recipientEmail) . '&token=' . urlencode($verification_token);
 
         $subject = is_null($verification_token) ? "Employee Daily Time Record System - Welcome" : "Employee Daily Time Record System - Account Verification 🎉";
         
-        // Build the HTML body
         $bodyHtml = "
             <html>
             <body style='font-family: Arial, sans-serif; background-color: #f4f7f6; padding: 20px; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; margin: 0;'>
@@ -172,7 +143,6 @@ class EmailSender {
                         <p style='margin-bottom: 25px;'>Your account for the DTR System has been created.</p>
                         ";
 
-        // Add verification block if token exists
         if (!is_null($verification_token) && !empty($verification_token)) {
             $bodyHtml .= "
                         <p style='margin-bottom: 25px;'>Before logging in, you must verify your email address by clicking the button below:</p>
