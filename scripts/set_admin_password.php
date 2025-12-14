@@ -1,8 +1,5 @@
 <?php
-/**
- * Usage: php set_admin_password.php email new_password
- * This updates both the admin.pass_ad and users.password columns with a secure hash.
- */
+
 require_once __DIR__ . '/../classes/database.php';
 
 $email = $argv[1] ?? null;
@@ -16,7 +13,6 @@ if (!$email || !$newPassword) {
 $db = new Database();
 $conn = $db->getConnection();
 
-// Find admin record
 $stmt = $conn->prepare("SELECT * FROM admin WHERE email_ad = :email");
 $stmt->bindParam(':email', $email);
 $stmt->execute();
@@ -29,13 +25,11 @@ if (!$admin) {
 
 $hash = password_hash($newPassword, PASSWORD_DEFAULT);
 
-// Update admin table
 $update = $conn->prepare("UPDATE admin SET pass_ad = :pass WHERE adid = :adid");
 $update->bindParam(':pass', $hash);
 $update->bindParam(':adid', $admin['adid']);
 $update->execute();
 
-// Update users table if user_id exists
 $uid = $admin['user_id'] ?? null;
 if ($uid) {
     $update2 = $conn->prepare("UPDATE users SET password = :pass WHERE id = :uid");
