@@ -8,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <style>
         
-        /* Define modern colors */
         :root {
             --sys-red: #8b0000;
             --sys-red-light: #dc3545;
@@ -27,7 +26,6 @@
             padding: 0;
         }
 
-        /* --- Global Structure and Header --- */
         .main-header {
             position: fixed;
             top: 0;
@@ -69,8 +67,6 @@
             color: var(--sys-red);
         }
 
-
-        /* --- Fixed Left Sidebar --- */
         .main-sidebar {
             width: 250px;
             position: fixed;
@@ -121,7 +117,6 @@
             line-height: 1;
         }
 
-        /* --- Main Content Area --- */
         .content-wrapper {
             margin-left: 250px; 
             padding: 30px;
@@ -136,7 +131,6 @@
             margin-bottom: 25px;
         }
         
-        /* --- Info Box Widgets (Top Row) --- */
         .info-box {
             border-radius: 8px;
             margin-bottom: 25px;
@@ -191,7 +185,6 @@
             font-weight: 600;
         }
         
-        /* Custom Widget Colors (Modernized Gradients) */
         .bg-red-system { background: linear-gradient(135deg, #a00000 0%, var(--sys-red) 100%); }
         .bg-danger { background: linear-gradient(135deg, #e3342f 0%, var(--sys-red-light) 100%); }
         .bg-blue-system { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); }
@@ -201,7 +194,6 @@
         .bg-yellow-system .info-box-text { color: var(--sys-dark-bg); } 
         .bg-yellow-system .info-box-link { color: var(--sys-dark-bg); }
         
-        /* --- Chart Styling --- */
         .chart-widget {
             background-color: white;
             border-radius: 8px;
@@ -239,29 +231,35 @@
             <li><a href="viewEmployee.php">Employee Accounts</a></li>
             
             <li style="padding: 10px 15px; font-weight: bold; color: #999; font-size: 0.85rem;">— Daily Review & Actions</li>
-                            <li class="">
+                <li class="">
                     <a href="viewPendingPage.php">
-                        DTR Confirmations                                            </a>
+                        DTR Confirmations                                            
+                    </a>
                 </li>
-                            <li class="">
+                <li class="">
                     <a href="viewEarlyTime.php">
-                        Early Clock-out Requests                                            </a>
+                        Early Clock-out Requests                                            
+                    </a>
                 </li>
-                            <li class="">
+                <li class="">
                     <a href="viewLeaveRequests.php">
-                        Leave Requests                                            </a>
+                        Leave Requests                                            
+                    </a>
                 </li>
-                            <li class="">
+                <li class="">
                     <a href="viewPasswordRequest.php">
-                        Password Reset Requests                                            </a>
+                        Password Reset Requests                                            
+                    </a>
                 </li>
-                            <li class="active">
+                <li class="active">
                     <a href="viewNotifications.php">
-                        System Notifications                                            </a>
+                        System Notifications                                            
+                    </a>
                 </li>
-                            <li class="">
+                <li class="">
                     <a href="viewEmployeeDaily.php">
-                        View All DTR Report                                            </a>
+                        View All DTR Report                                            
+                    </a>
                 </li>
                     </ul>
     </div>
@@ -342,7 +340,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('performanceChart').getContext('2d');
         
-        // PHP data injected into JavaScript
         const activityData = [0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
         
         const labels = Array.from({length: 24}, (_, i) => {
