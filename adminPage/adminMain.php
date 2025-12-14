@@ -4,7 +4,6 @@ if (!isset($_SESSION['admin_id'])) {
     header("Location: ../user/login.php");
     exit();
 }
-// Include all necessary classes
 require_once '../classes/admin.php';
 require_once '../classes/employee.php';
 require_once '../classes/earlytimeoutrequest.php';
@@ -14,7 +13,6 @@ require_once '../classes/leave.php';
 require_once '../classes/notification.php';
 require_once '../classes/analytics.php';
 
-// Instantiate classes and fetch data
 $admin = new Admin();
 $employee = new Employee();
 $requestManager = new EarlyTimeoutRequest();
@@ -26,21 +24,17 @@ $analyticsManager = new Analytics();
 
 $adminCount = $admin->countAdmins();
 $employeeCount = $employee->countEmployees();
-// Fetch counts for pending items
 $pendingDTRCount = count($attendanceManager->getPendingDTRs()); 
 $pendingRequestCount = count($requestManager->getPendingRequests());
 $pendingLeaveCount = count($leaveManager->getPendingRequests());
 $pendingPasswordCount = count($passwordRequestManager->getPendingRequests());
-// Assuming countUnreadNotifications is used here for simplicity, or re-filtering is fine.
 $unreadNotificationCount = $notificationManager->countUnreadNotifications('admin', $_SESSION['admin_id']); 
 
-// Fetch Analytics Data
 $lateArrivals = $analyticsManager->countLateArrivalsLast30Days(); 
 $earlyExits = $analyticsManager->countEarlyExitsLast30Days(); 
 
 $totalPending = $pendingDTRCount + $pendingRequestCount + $pendingLeaveCount + $pendingPasswordCount;
 
-// Data structure for the top 4 widgets
 $main_metrics = [
     ['title' => 'Total Admins', 'count' => $adminCount, 'link' => 'viewAdmin.php', 'color' => '#8b0000', 'icon' => '👤'],
     ['title' => 'Total Employees', 'count' => $employeeCount, 'link' => 'viewEmployee.php', 'color' => '#ffc107', 'text_color' => 'black', 'icon' => '👥'],
@@ -48,7 +42,6 @@ $main_metrics = [
     ['title' => 'Early Exits (30d)', 'count' => $earlyExits, 'link' => '#', 'color' => '#007bff', 'icon' => '⏱️'],
 ];
 
-// Data structure for the sidebar action menu
 $sidebar_actions = [
     ['label' => 'DTR Confirmations', 'link' => 'viewPendingPage.php', 'count' => $pendingDTRCount, 'pending' => $pendingDTRCount > 0],
     ['label' => 'Early Clock-out Requests', 'link' => 'viewEarlyTime.php', 'count' => $pendingRequestCount, 'pending' => $pendingRequestCount > 0],
@@ -58,7 +51,6 @@ $sidebar_actions = [
     ['label' => 'View All DTR Report', 'link' => 'viewEmployeeDaily.php', 'count' => 0, 'pending' => false],
 ];
 
-// PHP array to JSON for JavaScript Chart
 $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityData()));
 ?>
 <!DOCTYPE html>
@@ -71,7 +63,6 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <style>
         
-        /* Define modern colors */
         :root {
             --sys-red: #8b0000;
             --sys-red-light: #dc3545;
@@ -81,7 +72,6 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
             --sys-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             --sys-radius: 8px;
         }
-
         body {
             background: #f0f2f5; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -89,8 +79,6 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
             margin: 0;
             padding: 0;
         }
-
-        /* --- Global Structure and Header --- */
         .main-header {
             position: fixed;
             top: 0;
@@ -135,8 +123,6 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
             background-color: var(--sys-yellow);
             color: var(--sys-red);
         }
-
-        /* --- Fixed Left Sidebar --- */
         .main-sidebar {
             width: 250px;
             position: fixed;
@@ -150,13 +136,11 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
             overflow-y: auto;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         }
-
         .sidebar-menu {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-
         .sidebar-menu li a {
             display: flex;
             justify-content: space-between;
@@ -169,7 +153,6 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
             font-weight: 500;
             font-size: 0.95rem;
         }
-
         .sidebar-menu li a:hover,
         .sidebar-menu li a.active {
             color: white;
@@ -186,8 +169,6 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
             font-weight: bold;
             line-height: 1;
         }
-
-        /* --- Main Content Area --- */
         .content-wrapper {
             margin-left: 250px; 
             padding: 30px;
@@ -195,14 +176,11 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
             box-sizing: border-box;
             padding-top: 80px; 
         }
-        
         .content-header h1 {
             color: #333;
             font-weight: 400;
             margin-bottom: 25px;
         }
-        
-        /* --- Info Box Widgets (Top Row) --- */
         .info-box {
             border-radius: 8px;
             margin-bottom: 25px;
@@ -219,33 +197,28 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
              transform: translateY(-3px);
              box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         }
-
         .info-box-inner {
             padding: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
         .info-box-text {
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             opacity: 0.9;
         }
-
         .info-box-number {
             font-size: 2.2rem;
             font-weight: 700;
             line-height: 1;
             margin-top: 5px;
         }
-
         .info-box-icon {
             font-size: 2.5rem;
             opacity: 0.7;
         }
-        
         .info-box-link {
             display: block;
             background: rgba(0, 0, 0, 0.15);
@@ -256,8 +229,6 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
             font-size: 0.8rem;
             font-weight: 600;
         }
-        
-        /* Custom Widget Colors (Modernized Gradients) */
         .bg-red-system { background: linear-gradient(135deg, #a00000 0%, var(--sys-red) 100%); }
         .bg-danger { background: linear-gradient(135deg, #e3342f 0%, var(--sys-red-light) 100%); }
         .bg-blue-system { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); }
@@ -266,8 +237,7 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
         .bg-yellow-system .info-box-icon,
         .bg-yellow-system .info-box-text { color: var(--sys-dark-bg); } 
         .bg-yellow-system .info-box-link { color: var(--sys-dark-bg); }
-        
-        /* --- Chart Styling --- */
+    
         .chart-widget {
             background-color: white;
             border-radius: 8px;
@@ -283,20 +253,16 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
             border-bottom: 1px solid #eee;
         }
         
-        /* --- RESPONSIVE STYLES --- */
-        /* Media query for screens up to 992px (typical tablet/small desktop) */
         @media (max-width: 992px) {
             .main-header .logo {
-                margin-left: 0; /* Remove left margin on header logo */
+                margin-left: 0;
                 font-size: 1.1rem;
             }
 
-            /* Hide the fixed sidebar, rely on main header navigation (or implement a toggle here) */
             .main-sidebar {
                 display: none;
             }
 
-            /* Make content wrapper full width */
             .content-wrapper {
                 margin-left: 0;
                 width: 100%;
@@ -304,20 +270,13 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
                 padding-right: 15px;
             }
             
-            /* Ensure info boxes stack to one column on smaller mobile devices (< 576px) 
-               Bootstrap's col-md-6 is still two columns between 768px and 576px.
-               We explicitly set this for max compatibility if Bootstrap's default grid is ignored. 
-            */
             .row > .col-lg-3 {
-                /* On screens up to 992px, force to 50% width to display 2 columns (or 100% on smallest screens) */
                  flex: 0 0 50%;
                  max-width: 50%;
             }
         }
 
-        /* Media query for screens up to 576px (typical phone screen) */
         @media (max-width: 576px) {
-            /* Force all columns to full width (stacking) */
             .row > .col-lg-3,
             .row > .col-md-6 {
                 flex: 0 0 100%;
@@ -372,7 +331,6 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
 
         <div class="row">
             <?php foreach ($main_metrics as $i => $metric): 
-                // Assign colors based on index/type
                 $bgColor = $i === 0 ? 'bg-red-system' : ($i === 1 ? 'bg-yellow-system' : ($i === 2 ? 'bg-danger' : 'bg-blue-system'));
             ?>
             <div class="col-lg-3 col-md-6">
@@ -407,7 +365,6 @@ $js_hourly_data = json_encode(array_values($analyticsManager->getHourlyActivityD
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('performanceChart').getContext('2d');
         
-        // PHP data injected into JavaScript
         const activityData = <?php echo $js_hourly_data; ?>;
         
         const labels = Array.from({length: 24}, (_, i) => {
