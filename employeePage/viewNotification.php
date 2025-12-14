@@ -12,7 +12,6 @@ $empid = $_SESSION['employee_id'];
 $notificationManager = new Notification();
 $message = '';
 
-// --- 1. Handle Delete Action ---
 if (isset($_GET['delete_id'])) {
     $deleteId = intval($_GET['delete_id']);
     if ($deleteId > 0) {
@@ -35,7 +34,6 @@ if (isset($_GET['delete_id'])) {
     }
 }
 
-// --- 2. Handle Feedback Status from Redirect ---
 if (isset($_GET['status'])) {
     if ($_GET['status'] === 'marked_read') {
         $message = '<div class="alert alert-success">Notification marked as read.</div>';
@@ -47,7 +45,6 @@ if (isset($_GET['error']) && $_GET['error'] === 'invalid_notification') {
     $message = '<div class="alert alert-danger">Error: Could not retrieve the specific notification.</div>';
 }
 
-// --- 3. Fetch Notifications ---
 $notifications = $notificationManager->getNotifications('employee', $empid);
 ?>
 <!DOCTYPE html>
@@ -66,14 +63,14 @@ $notifications = $notificationManager->getNotifications('employee', $empid);
             align-items: center;
             margin-bottom: 10px;
         }
-        /* FIX: Give the link a flexible width to use available space before the button */
+        
         .notification-link {
             text-decoration: none;
             color: inherit;
-            flex-basis: 92%; /* Set a preferred basis */
+            flex-basis: 92%;
             flex-grow: 1; 
             flex-shrink: 0;
-            margin-right: 10px; /* Space between link and button */
+            margin-right: 10px; 
         }
         .notification-item {
             border: 1px solid #ddd;
@@ -102,7 +99,6 @@ $notifications = $notificationManager->getNotifications('employee', $empid);
             color: #8b0000;
             text-transform: uppercase;
         }
-        /* FIX: Remove max-width restriction on snippet */
         .notification-snippet {
             display: block;
             margin-top: 5px;
@@ -113,21 +109,18 @@ $notifications = $notificationManager->getNotifications('employee', $empid);
             white-space: nowrap;
             text-overflow: ellipsis;
         }
-        /* The inner flex container must properly distribute space */
         .notification-item .d-flex {
             justify-content: space-between;
             align-items: center;
             width: 100%;
         }
-        /* Ensure the text container (div inside d-flex) can shrink but the date is pushed right */
         .notification-item .d-flex > div:first-child {
             flex-grow: 1;
             flex-shrink: 1;
-            /* Allow the text container to occupy most space */
             min-width: 0; 
         }
         .notification-item small {
-            flex-shrink: 0; /* Prevents date from wrapping */
+            flex-shrink: 0; 
             margin-left: 10px;
         }
 
