@@ -1,5 +1,4 @@
 <?php
-// Simple landing page with Login and Request Account
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,7 +24,6 @@
                 display: flex;
                 justify-content: center;
                 align-items: center; 
-                /* ADJUSTMENT: Reduced vertical padding to pull the box up */
                 padding: 10px 20px; 
             }
             .center {
