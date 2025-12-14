@@ -19,8 +19,6 @@ if ($notifId === 0) {
 $notificationManager = new Notification();
 $notification = null;
 
-// --- 1. Fetch Notification ---
-// Must fetch to ensure the ID belongs to the logged-in employee
 $notifications = $notificationManager->getNotifications('employee', $empid);
 
 foreach ($notifications as $n) {
@@ -31,12 +29,10 @@ foreach ($notifications as $n) {
 }
 
 if (!$notification) {
-    // Notification not found or does not belong to this user
     header("Location: viewNotification.php?error=invalid_notification");
     exit();
 }
 
-// --- 2. Mark as Read ---
 if ($notification['is_read'] == 0) {
     $notificationManager->markAsRead($notifId);
 }
