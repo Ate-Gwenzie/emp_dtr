@@ -1,11 +1,9 @@
 <?php
-// Simple Mailer wrapper that prefers PHPMailer (via composer) but falls back to mail().
 class Mailer {
     public static function send($to, $subject, $htmlBody, $plainBody = '') {
         $cfg = @include __DIR__ . '/../config/email_config.php';
         if (!$cfg) $cfg = [];
 
-        // Try PHPMailer via composer if available
         if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
             require_once __DIR__ . '/../vendor/autoload.php';
             try {
@@ -31,7 +29,6 @@ class Mailer {
             }
         }
 
-        // Fallback to PHP mail()
         $headers = "MIME-Version: 1.0" . "\r\n";
         $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
         $headers .= 'From: ' . ($cfg['from_name'] ?? 'DTR System') . ' <' . ($cfg['from_email'] ?? 'noreply@localhost') . '>' . "\r\n";
