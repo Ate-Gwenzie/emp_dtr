@@ -4,7 +4,6 @@ require_once __DIR__ . '/../classes/notification.php';
 ?>
 <link rel="stylesheet" href="/emp_dtr/assets/css/app.css" />
 <style>
-  /* Standard modern colors/styles */
   :root {
       --sys-red: #8b0000;
       --sys-red-light: #dc3545;
@@ -18,7 +17,7 @@ require_once __DIR__ . '/../classes/notification.php';
     align-items: center;
     justify-content: space-between;
     box-shadow: 0 4px 6px rgba(0,0,0,0.08);
-    position: relative; /* For mobile dropdown positioning */
+    position: relative; 
   }
   .app-header .brand { 
       font-weight: 700; 
@@ -33,7 +32,6 @@ require_once __DIR__ . '/../classes/notification.php';
   .app-header .nav-links { display:flex; gap:12px; align-items:center }
   .app-header .nav-links a { color: white; text-decoration: none; font-weight:600; display: inline-flex; align-items: center; }
   
-  /* SVG Icon styles */
   .icon-sm {
     width: 20px;
     height: 20px;
@@ -44,7 +42,7 @@ require_once __DIR__ . '/../classes/notification.php';
   }
   
   .nav-toggle { 
-      display: none; /* Hide on desktop */
+      display: none;
       align-items: center;
       justify-content: center;
       background:none; 
@@ -60,12 +58,10 @@ require_once __DIR__ . '/../classes/notification.php';
       fill: none;
   }
 
-  /* Mobile Styles with Soft Dropdown */
   @media (max-width: 768px) {
-    .nav-toggle { display:flex } /* Show toggle button */
+    .nav-toggle { display:flex }
     
     .app-header .nav-links {
-        /* Mobile menu container setup */
         flex-direction: column;
         align-items: flex-start;
         position: absolute;
@@ -74,9 +70,8 @@ require_once __DIR__ . '/../classes/notification.php';
         background-color: #7a0000;
         border-top: 1px solid var(--sys-yellow);
         width: 100%;
-        display: flex; /* Required for max-height transition */
+        display: flex; 
 
-        /* Animation properties */
         max-height: 0; 
         opacity: 0;
         padding: 0 20px; 
@@ -85,7 +80,7 @@ require_once __DIR__ . '/../classes/notification.php';
         z-index: 100;
     }
     .app-header .nav-links.show {
-        max-height: 300px; /* Max height large enough for content */
+        max-height: 300px; 
         opacity: 1;
         padding-top: 10px;
         padding-bottom: 10px;
@@ -154,7 +149,6 @@ require_once __DIR__ . '/../classes/notification.php';
       btn.setAttribute('aria-expanded', !expanded);
       nav.classList.toggle('show');
     });
-    // click outside to close
     document.addEventListener('click', function(e){
       if (!nav.contains(e.target) && !btn.contains(e.target)) {
         nav.classList.remove('show');
