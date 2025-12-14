@@ -2,23 +2,18 @@
 if (session_status() == PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../classes/notification.php';
 
-// Calculate unread notifications only if an employee is logged in
 $unread = 0;
-// Note: Based on your file structure and logic, $_SESSION['employee_id'] here is likely the primary key 'empid', not the public 'employee_id'.
 if (isset($_SESSION['employee_id'])) {
     try {
         $notification = new Notification();
-        // Assuming $_SESSION['employee_id'] is the empid
         $unread = $notification->countUnreadNotifications('employee', $_SESSION['employee_id']);
     } catch (\Exception $e) {
-        // Log the error but continue to load the page
         error_log("Error counting notifications: " . $e->getMessage());
     }
 }
 ?>
 <link rel="stylesheet" href="/emp_dtr/assets/css/app.css" />
 <style>
-  /* Base Header Styles */
   .app-header {
     background-color: #8b0000;
     color: white;
@@ -29,25 +24,22 @@ if (isset($_SESSION['employee_id'])) {
     box-shadow: 0 4px 6px rgba(0,0,0,0.08);
     position: relative;
   }
-  /* Updated Brand Styles to include the logo */
   .app-header .brand { 
       font-weight: 700; 
       font-size: 1.2rem; 
-      text-decoration: none; /* Make sure it doesn't look like a plain div */
+      text-decoration: none;
       color: white;
-      display: flex; /* Enable flex for logo and text alignment */
+      display: flex;
       align-items: center;
   }
-  /* NEW: Logo style */
   .app-header .brand img {
-      height: 30px; /* Adjust height of the logo */
+      height: 30px; 
       margin-right: 10px;
   }
   .app-header .nav-links { display:flex; gap:12px; align-items:center }
   .app-header .nav-links a { color: white; text-decoration: none; font-weight:600; display: inline-flex; align-items: center; } /* Updated to display: inline-flex for alignment */
   .app-header .nav-links a .notif-count { display:inline-block; background:#ffc107; color:#000; font-weight:700; padding:2px 6px; border-radius:999px; font-size:0.8rem; margin-left:6px; }
   
-  /* NEW: Style for SVG icons in nav links */
   .app-header .nav-links a svg {
       width: 20px;
       height: 20px;
@@ -55,12 +47,11 @@ if (isset($_SESSION['employee_id'])) {
       stroke-width: 2.5;
       fill: none;
       vertical-align: middle;
-      margin-right: 4px; /* Added margin for spacing with text */
+      margin-right: 4px;
   }
 
   .nav-toggle { 
-      /* Updated for SVG icon */
-      display: flex; /* Changed from display:none to flex for SVG alignment */
+      display: flex;
       align-items: center;
       justify-content: center;
       background:none; 
@@ -81,13 +72,11 @@ if (isset($_SESSION['employee_id'])) {
   .app-container h1 { color: #8b0000; margin-bottom: 12px; font-weight: 600; }
   .btn-main { width:auto }
 
-  /* Mobile Styles - Fixing the Parse Error */
   @media (max-width: 768px) {
     .nav-toggle { display:flex }
     .app-header { padding: 10px 12px }
     .app-header .brand { font-size:1rem }
     
-    /* Mobile Menu Logic - Updated for soft dropdown animation */
     .app-header .nav-links {
         flex-direction: column;
         align-items: flex-start;
@@ -97,19 +86,18 @@ if (isset($_SESSION['employee_id'])) {
         background-color: #7a0000;
         border-top: 1px solid #ffc107;
         width: 100%;
-        display: flex; /* Must be 'flex' for the layout to calculate max-height correctly */
-        /* Animation properties */
+        display: flex; 
         max-height: 0; 
         opacity: 0;
-        padding: 0 20px; /* Only horizontal padding in the hidden state */
+        padding: 0 20px; 
         overflow: hidden;
         transition: max-height 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
         z-index: 100;
     }
     .app-header .nav-links.show {
-        max-height: 300px; /* Should be a value larger than the max height of the menu content */
+        max-height: 300px; 
         opacity: 1;
-        padding-top: 10px; /* Add vertical padding for visible state */
+        padding-top: 10px; 
         padding-bottom: 10px;
     }
     .app-header .nav-links a {
@@ -168,7 +156,6 @@ if (isset($_SESSION['employee_id'])) {
       btn.setAttribute('aria-expanded', !expanded);
       nav.classList.toggle('show');
     });
-    // click outside to close
     document.addEventListener('click', function(e){
       if (!nav.contains(e.target) && !btn.contains(e.target)) {
         nav.classList.remove('show');
