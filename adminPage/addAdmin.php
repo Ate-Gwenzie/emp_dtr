@@ -63,8 +63,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $password_hash = password_hash($pass_ad, PASSWORD_DEFAULT);
                 try {
                     $admin->addAdmin($password_hash);
-                    // NOTE: Admins do not require email verification by default.
-                    // Skipping generation of verification tokens and sending verification email.
                     $success = "Admin added successfully.";
                     header("Location: viewAdmin.php");
                     exit();
@@ -92,8 +90,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
         }
-
-        /* Header styles centralized to assets/css/app.css */
 
         h1 {
             text-align: center;
