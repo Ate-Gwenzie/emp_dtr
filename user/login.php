@@ -11,16 +11,11 @@ $errors = [];
 $email = $_POST["email"] ?? "";
 $password = $_POST["password"] ?? "";
 
-// Load email configuration to determine if verification is required
 $cfg = include __DIR__ . '/../config/email_config.php';
 $require_verification = $cfg['require_email_verification'] ?? true;
 
-// =========================================================================
-// NEW LOGIC: Check for verification status from the URL and set session message
-// =========================================================================
 if (isset($_GET['verified'])) {
     if ($_GET['verified'] === 'success') {
-        // SUCCESS MESSAGE (Requested by User)
         $_SESSION['feedback_message'] = "✅ Account validated, you may log in.";
         $_SESSION['feedback_type'] = "alert-success";
     } elseif ($_GET['verified'] === 'failed' || $_GET['verified'] === 'incomplete') {
@@ -30,12 +25,9 @@ if (isset($_GET['verified'])) {
         $_SESSION['feedback_message'] = "❌ A technical error occurred during verification. Please contact system support.";
         $_SESSION['feedback_type'] = "alert-danger";
     }
-    // Redirect back to login.php to remove the GET parameter from the URL, preventing re-display on refresh
     header('Location: login.php');
     exit();
 }
-// =========================================================================
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim(htmlspecialchars($_POST["email"] ?? ""));
     $password = trim(htmlspecialchars($_POST["password"] ?? ""));
@@ -52,7 +44,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($admin && password_verify($password, $admin['pass_ad'])) {
-            // Admin users are allowed to login without requiring email verification
             $_SESSION['admin_id'] = $admin['adid'];
             $_SESSION['admin_name'] = $admin['fname_ad'] . ' ' . $admin['lname_ad'];
             header("Location: ../adminPage/adminMain.php");
@@ -64,11 +55,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
         $employee = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        // FIX: The employee verification check was redundant and complex. 
-        // Using the 'is_verified' flag from the employee table is the simplest and most reliable way.
         if ($employee && password_verify($password, $employee['pass_emp'])) {
             
-            // Assuming the `employee` table correctly has the `is_verified` column (0 or 1)
             $is_verified = (bool)($employee['is_verified'] ?? 0); 
 
             if ($require_verification && !$is_verified) {
@@ -268,19 +256,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Autohide existing request status message
         const requestAlert = document.getElementById('success-alert');
         if (requestAlert) {
             setTimeout(function() {
                 requestAlert.style.display = 'none';
             }, 3000); 
         }
-        // Autohide new verification feedback message
         const feedbackAlert = document.getElementById('feedback-alert');
         if (feedbackAlert) {
             setTimeout(function() {
                 feedbackAlert.style.display = 'none';
-            }, 5000); // Give users a little more time to read the validation success
+            }, 5000);
         }
     });
 </script>
