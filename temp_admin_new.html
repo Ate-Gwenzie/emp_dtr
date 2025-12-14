@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        
+        /* Define modern colors */
+        :root {
+            --sys-red: #8b0000;
+            --sys-red-light: #dc3545;
+            --sys-yellow: #ffc107;
+            --sys-dark-bg: #2c3e50;
+            --sys-text-muted: #6c757d;
+            --sys-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --sys-radius: 8px;
+        }
+
+        body {
+            background: #f0f2f5; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- Global Structure and Header --- */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            z-index: 1030;
+            background-color: var(--sys-red);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .main-header .logo {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-left: 250px;
+            letter-spacing: 0.5px;
+            display:flex;align-items:center;gap:10px;
+        }
+        .main-header .main-logo { width:34px; height:34px; object-fit:contain; border-radius:6px; box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
+        .main-header .user-info {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+        .main-header .logout {
+            color: var(--sys-yellow);
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid var(--sys-yellow);
+            border-radius: 4px;
+            margin-left: 15px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .main-header .logout:hover {
+            background-color: var(--sys-yellow);
+            color: var(--sys-red);
+        }
+
+        /* NEW: Styles for SVG icons */
+        .icon-sm {
+            width: 18px; /* Standard size for sidebar icons */
+            height: 18px;
+            fill: none; /* Default for stroke icons */
+            stroke: currentColor; /* Inherit color from parent */
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0; /* Important to prevent resizing in flex containers */
+        }
+        .main-header .user-info .icon-sm {
+            width: 20px;
+            height: 20px;
+            color: var(--sys-yellow);
+        }
+
+
+        /* --- Fixed Left Sidebar --- */
+        .main-sidebar {
+            width: 250px;
+            position: fixed;
+            top: 0; 
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            background-color: var(--sys-dark-bg); 
+            color: white;
+            padding-top: 50px; 
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            justify-content: flex-start; /* Changed to start */
+            align-items: center;
+            gap: 10px; /* Added gap for icon spacing */
+            padding: 12px 15px;
+            color: #c0c0c0;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .sidebar-menu li a > span:last-child { /* Targets the pending indicator for float right */
+            margin-left: auto;
+        }
+
+        .sidebar-menu li a:hover,
+        .sidebar-menu li a.active {
+            color: white;
+            background: #343a40;
+            border-left-color: var(--sys-yellow);
+        }
+        
+        .sidebar-menu .pending-indicator {
+            background-color: var(--sys-red-light);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            line-height: 1;
+            /* margin-left: auto; /* Handled by a:last-child */
+        }
+
+        /* --- Main Content Area --- */
+        .content-wrapper {
+            margin-left: 250px; 
+            padding: 30px;
+            width: calc(100% - 250px);
+            box-sizing: border-box;
+            padding-top: 80px; 
+        }
+        
+        .content-header h1 {
+            color: #333;
+            font-weight: 400;
+            margin-bottom: 25px;
+        }
+        
+        /* --- Info Box Widgets (Top Row) --- */
+        .info-box {
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); 
+            color: white;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .info-box:hover {
+             transform: translateY(-3px);
+             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-box-inner {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .info-box-text {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+        }
+
+        .info-box-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-top: 5px;
+        }
+
+        .info-box-icon {
+            font-size: 2.5rem;
+            opacity: 0.7;
+            /* Update to support SVG */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .info-box-icon .icon-lg {
+            width: 40px; /* Larger size for info box icons */
+            height: 40px;
+            color: white; /* Ensure color is white for info boxes */
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+        
+        /* Custom Widget Colors (Modernized Gradients) */
+        .bg-red-system { background: linear-gradient(135deg, #a00000 0%, var(--sys-red) 100%); }
+        .bg-danger { background: linear-gradient(135deg, #e3342f 0%, var(--sys-red-light) 100%); }
+        .bg-blue-system { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); }
+        .bg-yellow-system { background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); color: #333; }
+        .bg-yellow-system .info-box-number, 
+        .bg-yellow-system .info-box-text { color: var(--sys-dark-bg); } 
+        .bg-yellow-system .info-box-icon .icon-lg { color: var(--sys-dark-bg); } /* Target the SVG directly */
+        .bg-yellow-system .info-box-link { color: var(--sys-dark-bg); }
+        
+        /* --- Chart Styling --- */
+        .chart-widget {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--sys-shadow);
+            margin-bottom: 30px;
+        }
+        .chart-title {
+            color: var(--sys-red);
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        
+    </style>
+</head>
+<body>
+
+        <div class="main-header">
+            <span class="logo"><img src="/emp_dtr/logo.png" class="main-logo" alt="DTR Logo" /><span>Employee Daily Time Record</span></span>
+            <div class="user-info">
+                Welcome, System Admin                
+                <a href="viewNotifications.php" title="Notifications" style="margin-left:12px;color:var(--sys-yellow);text-decoration:none;font-weight:700;display:inline-flex;align-items:center;">
+                    <svg class="icon-sm" style="margin-right:6px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9zm-1.87 11a2 2 0 1 1-3.48 0"/></svg>
+                    <span class='notif-count' style='background:#ffc107;color:#000;padding:2px 6px;border-radius:999px;font-weight:700;margin-left:6px'>1</span>
+                </a>
+                <a class="logout" href="../user/logout.php">Log Out</a>
+            </div>
+        </div>
+
+    <div class="main-sidebar">
+        <h3 style="padding: 15px; margin: 0; color: #ffc107; font-size: 1.1rem; border-bottom: 1px solid #343a40;">DTR Admin Panel</h3>
+        <ul class="sidebar-menu">
+            <li><a href="adminMain.php" class="active">
+                <svg class="icon-sm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+                Dashboard Home
+            </a></li>
+            
+            <li style="padding: 10px 15px; font-weight: bold; color: #999; font-size: 0.85rem;">— User Management</li>
+            <li><a href="viewAdmin.php">
+                <svg class="icon-sm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Admin Accounts
+            </a></li>
+            <li><a href="viewEmployee.php">
+                <svg class="icon-sm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Employee Accounts
+            </a></li>
+            
+            <li style="padding: 10px 15px; font-weight: bold; color: #999; font-size: 0.85rem;">— Daily Review & Actions</li>
+                <li class="">
+                    <a href="viewPendingPage.php">
+                        <svg class="icon-sm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                        DTR Confirmations      
+                    </a>
+                </li>
+                <li class="">
+                    <a href="viewEarlyTime.php">
+                        <svg class="icon-sm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        Early Clock-out Requests                                          
+                    </a>
+                </li>
+                <li class="">
+                    <a href="viewLeaveRequests.php">
+                        <svg class="icon-sm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                        Leave Requests                                            
+                    </a>
+                </li>
+                    <li class="">
+                    <a href="viewPasswordRequest.php">
+                        <svg class="icon-sm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 4V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v20a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-2"/><path d="M18 8h1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"/><path d="M10 14h5"/><path d="M10 18h5"/></svg>
+                        Password Reset Requests        
+                    </a>
+                </li>
+                    <li class="active">
+                    <a href="viewNotifications.php">
+                        <svg class="icon-sm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9zm-1.87 11a2 2 0 1 1-3.48 0"/></svg>
+                        System Notifications                                                    
+                        <span class="pending-indicator">1</span>
+                    </a>
+                </li>
+                            <li class="">
+                    <a href="viewEmployeeDaily.php">
+                        <svg class="icon-sm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 15h8M8 12h8M8 18h5"/></svg>
+                        View All DTR Report                                            
+                    </a>
+                </li>
+                    </ul>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="content-header">
+            <h1 class="text-secondary">System Overview</h1>
+        </div>
+        
+        
+        <div class="row">
+                        <div class="col-lg-3 col-md-6">
+                <div class="info-box bg-red-system">
+                    <div class="info-box-inner">
+                        <div>
+                            <div class="info-box-text">Total Admins</div>
+                            <div class="info-box-number">1</div>
+                        </div>
+                        <div class="info-box-icon">
+                            <svg class="icon-lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                    </div>
+                    <a href="viewAdmin.php" class="info-box-link">
+                        Manage Accounts                    </a>
+                </div>
+            </div>
+                        <div class="col-lg-3 col-md-6">
+                <div class="info-box bg-yellow-system">
+                    <div class="info-box-inner">
+                        <div>
+                            <div class="info-box-text">Total Employees</div>
+                            <div class="info-box-number">1</div>
+                        </div>
+                        <div class="info-box-icon">
+                            <svg class="icon-lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                    </div>
+                    <a href="viewEmployee.php" class="info-box-link">
+                        Manage Accounts                    </a>
+                </div>
+            </div>
+                        <div class="col-lg-3 col-md-6">
+                <div class="info-box bg-danger">
+                    <div class="info-box-inner">
+                        <div>
+                            <div class="info-box-text">Late Arrivals (30d)</div>
+                            <div class="info-box-number">0</div>
+                        </div>
+                        <div class="info-box-icon">
+                            <svg class="icon-lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        </div>
+                    </div>
+                    <a href="#" class="info-box-link">
+                        View Analytics                    </a>
+                </div>
+            </div>
+                        <div class="col-lg-3 col-md-6">
+                <div class="info-box bg-blue-system">
+                    <div class="info-box-inner">
+                        <div>
+                            <div class="info-box-text">Early Exits (30d)</div>
+                            <div class="info-box-number">0</div>
+                        </div>
+                        <div class="info-box-icon">
+                            <svg class="icon-lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        </div>
+                    </div>
+                    <a href="#" class="info-box-link">
+                        View Analytics                    </a>
+                </div>
+            </div>
+                    </div>
+
+        <div class="row">
+            <div class="col-12">
+                <h3 class="chart-title">Employee Activity Chart</h3>
+                <div class="chart-widget">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        
+        // PHP data injected into JavaScript
+        const activityData = [0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+        
+        const labels = Array.from({length: 24}, (_, i) => {
+            if (i === 0) return '12 AM';
+            if (i === 12) return '12 PM';
+            return (i < 12) ? `${i} AM` : `${i - 12} PM`;
+        });
+
+        const performanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Clock Actions',
+                    data: activityData,
+                    backgroundColor: 'rgba(139, 0, 0, 0.7)', 
+                    borderColor: '#8b0000',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Hour of Day (Last 30 Days)',
+                            color: '#333'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Total Actions (In/Out)',
+                            color: '#333'
+                        },
+                        ticks: {
+                            stepSize: 1 
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false 
+                    },
+                    title: {
+                        display: true,
+                        text: 'Employee Activity Distribution',
+                        color: '#333',
+                        font: {
+                            size: 16
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

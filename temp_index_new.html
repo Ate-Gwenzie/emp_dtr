@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+            body {
+                background-image: url('/emp_dtr/time-dtr.jpg');
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                font-family: 'Segoe UI', Tahoma, Arial;
+                min-height: 100vh;
+                margin: 0;
+        }
+            .center {
+                max-width: 720px;
+                margin: 120px auto;
+                text-align: center;
+                background: rgba(255, 255, 255, 0.66);
+                padding: 48px 36px;
+                border-radius: 12px;
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+                backdrop-filter: blur(6px);
+            }
+            .brand-hero { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+            .brand-hero img { width: 120px; height: 120px; object-fit: contain; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); }
+            .hero-title { font-size: 1.6rem; color: #8b0000; margin: 0; font-weight: 700; }
+            .btn-main { width: 100%; padding: 15px; border-radius: 12px; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+<style>
+  .app-header {
+    background-color: #8b0000;
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+    position: relative;
+  }
+  .app-header .brand { font-weight: 700; font-size: 1.2rem; }
+  .app-header .nav-links { display:flex; gap:12px; align-items:center }
+  .app-header .nav-links a { color: white; text-decoration: none; font-weight:600 }
+  .app-header .nav-links a .notif-count { display:inline-block; background:#ffc107; color:#000; font-weight:700; padding:2px 6px; border-radius:999px; font-size:0.8rem; margin-left:6px; }
+  .nav-toggle { display:none; background:none; border:0; color:white; font-size:1.2rem }
+  .app-container { max-width: 1100px; margin: 30px auto; padding: 0 15px; }
+  .app-container h1 { color: #8b0000; margin-bottom: 12px; font-weight: 600; }
+  .btn-main { width:auto }
+
+  @media (max-width: 768px) {
+    .nav-toggle { display:block }
+    .app-header { padding: 10px 12px }
+    .app-header .brand { font-size:1rem }
+    .app-header .nav-links {
+      display:none;
+      position:absolute;
+      right:12px;
+      left:12px;
+      top:56px;
+      background:#8b0000;
+      flex-direction:column;
+      padding:12px;
+      border-radius:6px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.12);
+      z-index:30;
+    }
+    .app-header .nav-links.show { display:flex }
+    .app-header .nav-links a { margin:6px 0 }
+    .app-container { margin: 16px 12px }
+    .btn-main { width:100% }
+  }
+</style>
+
+<header class="app-header">
+  <div class="brand">Employee Daily Time Record</div>
+  <button class="nav-toggle" aria-expanded="false" aria-controls="main-nav" id="navToggle">☰</button>
+  <nav class="nav-links" id="main-nav">
+    <a href="/emp_dtr/index.php">Home</a>
+          <a href="/emp_dtr/user/login.php">Login</a>
+      <a href="/emp_dtr/user/request_account.php">Request Account</a>
+      </nav>
+</header>
+<script>
+  (function(){
+    var btn = document.getElementById('navToggle');
+    var nav = document.getElementById('main-nav');
+    if (!btn || !nav) return;
+    btn.addEventListener('click', function(){
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', !expanded);
+      nav.classList.toggle('show');
+    });
+    // click outside to close
+    document.addEventListener('click', function(e){
+      if (!nav.contains(e.target) && !btn.contains(e.target)) {
+        nav.classList.remove('show');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  })();
+</script>
+<div class="app-container center">
+    <div class="brand-hero">
+        <img src="/emp_dtr/logo.png" alt="DTR Logo" />
+        <h1 class="hero-title">Employee Daily Time Record</h1>
+        <p class="mb-4">Manage Daily-Time Records, requests and attendance, simply and securely.</p>
+    </div>
+    <a href="user/login.php" class="btn btn-outline-danger btn-main mb-3">Login</a>
+    <a href="user/request_account.php" class="btn btn-outline-danger btn-main mb-3">Request Account</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        
+        /* Define modern colors */
+        :root {
+            --sys-red: #8b0000;
+            --sys-red-light: #dc3545;
+            --sys-yellow: #ffc107;
+            --sys-dark-bg: #2c3e50;
+            --sys-text-muted: #6c757d;
+            --sys-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --sys-radius: 8px;
+        }
+
+        body {
+            background: #f0f2f5; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- Global Structure and Header --- */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            z-index: 1030;
+            background-color: var(--sys-red);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .main-header .logo {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-left: 250px;
+            letter-spacing: 0.5px;
+        }
+        .main-header .user-info {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+        .main-header .logout {
+            color: var(--sys-yellow);
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid var(--sys-yellow);
+            border-radius: 4px;
+            margin-left: 15px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .main-header .logout:hover {
+            background-color: var(--sys-yellow);
+            color: var(--sys-red);
+        }
+
+
+        /* --- Fixed Left Sidebar --- */
+        .main-sidebar {
+            width: 250px;
+            position: fixed;
+            top: 0; 
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            background-color: var(--sys-dark-bg); 
+            color: white;
+            padding-top: 50px; 
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            color: #c0c0c0;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-menu li a:hover,
+        .sidebar-menu li a.active {
+            color: white;
+            background: #343a40;
+            border-left-color: var(--sys-yellow);
+        }
+        
+        .sidebar-menu .pending-indicator {
+            background-color: var(--sys-red-light);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        /* --- Main Content Area --- */
+        .content-wrapper {
+            margin-left: 250px; 
+            padding: 30px;
+            width: calc(100% - 250px);
+            box-sizing: border-box;
+            padding-top: 80px; 
+        }
+        
+        .content-header h1 {
+            color: #333;
+            font-weight: 400;
+            margin-bottom: 25px;
+        }
+        
+        /* --- Info Box Widgets (Top Row) --- */
+        .info-box {
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); 
+            color: white;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .info-box:hover {
+             transform: translateY(-3px);
+             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-box-inner {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .info-box-text {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+        }
+
+        .info-box-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-top: 5px;
+        }
+
+        .info-box-icon {
+            font-size: 2.5rem;
+            opacity: 0.7;
+        }
+        
+        .info-box-link {
+            display: block;
+            background: rgba(0, 0, 0, 0.15);
+            color: inherit;
+            padding: 5px 15px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        /* Custom Widget Colors (Modernized Gradients) */
+        .bg-red-system { background: linear-gradient(135deg, #a00000 0%, var(--sys-red) 100%); }
+        .bg-danger { background: linear-gradient(135deg, #e3342f 0%, var(--sys-red-light) 100%); }
+        .bg-blue-system { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); }
+        .bg-yellow-system { background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); color: #333; }
+        .bg-yellow-system .info-box-number, 
+        .bg-yellow-system .info-box-icon,
+        .bg-yellow-system .info-box-text { color: var(--sys-dark-bg); } 
+        .bg-yellow-system .info-box-link { color: var(--sys-dark-bg); }
+        
+        /* --- Chart Styling --- */
+        .chart-widget {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--sys-shadow);
+            margin-bottom: 30px;
+        }
+        .chart-title {
+            color: var(--sys-red);
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        
+    </style>
+</head>
+<body>
+
+        <div class="main-header">
+            <span class="logo">Employee Daily Time Record</span>
+            <div class="user-info">
+                Welcome, System Admin                <a href="viewNotifications.php" title="Notifications" style="margin-left:12px;color:var(--sys-yellow);text-decoration:none;font-weight:700">🔔 </a>
+                <a class="logout" href="../user/logout.php">Log Out</a>
+            </div>
+        </div>
+
+    <div class="main-sidebar">
+        <h3 style="padding: 15px; margin: 0; color: #ffc107; font-size: 1.1rem; border-bottom: 1px solid #343a40;">DTR Admin Panel</h3>
+        <ul class="sidebar-menu">
+            <li><a href="adminMain.php" class="active">Dashboard Home</a></li>
+            
+            <li style="padding: 10px 15px; font-weight: bold; color: #999; font-size: 0.85rem;">— User Management</li>
+            <li><a href="viewAdmin.php">Admin Accounts</a></li>
+            <li><a href="viewEmployee.php">Employee Accounts</a></li>
+            
+            <li style="padding: 10px 15px; font-weight: bold; color: #999; font-size: 0.85rem;">— Daily Review & Actions</li>
+                            <li class="">
+                    <a href="viewPendingPage.php">
+                        DTR Confirmations                                            </a>
+                </li>
+                            <li class="">
+                    <a href="viewEarlyTime.php">
+                        Early Clock-out Requests                                            </a>
+                </li>
+                            <li class="">
+                    <a href="viewLeaveRequests.php">
+                        Leave Requests                                            </a>
+                </li>
+                            <li class="">
+                    <a href="viewPasswordRequest.php">
+                        Password Reset Requests                                            </a>
+                </li>
+                            <li class="active">
+                    <a href="viewNotifications.php">
+                        System Notifications                                            </a>
+                </li>
+                            <li class="">
+                    <a href="viewEmployeeDaily.php">
+                        View All DTR Report                                            </a>
+                </li>
+                    </ul>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="content-header">
+            <h1 class="text-secondary">System Overview</h1>
+        </div>
+        
+        
+        <div class="row">
+                        <div class="col-lg-3 col-md-6">
+                <div class="info-box bg-red-system">
+                    <div class="info-box-inner">
+                        <div>
+                            <div class="info-box-text">Total Admins</div>
+                            <div class="info-box-number">1</div>
+                        </div>
+                        <div class="info-box-icon">👤</div>
+                    </div>
+                    <a href="viewAdmin.php" class="info-box-link">
+                        Manage Accounts                    </a>
+                </div>
+            </div>
+                        <div class="col-lg-3 col-md-6">
+                <div class="info-box bg-yellow-system">
+                    <div class="info-box-inner">
+                        <div>
+                            <div class="info-box-text">Total Employees</div>
+                            <div class="info-box-number">1</div>
+                        </div>
+                        <div class="info-box-icon">👥</div>
+                    </div>
+                    <a href="viewEmployee.php" class="info-box-link">
+                        Manage Accounts                    </a>
+                </div>
+            </div>
+                        <div class="col-lg-3 col-md-6">
+                <div class="info-box bg-danger">
+                    <div class="info-box-inner">
+                        <div>
+                            <div class="info-box-text">Late Arrivals (30d)</div>
+                            <div class="info-box-number">0</div>
+                        </div>
+                        <div class="info-box-icon">🚨</div>
+                    </div>
+                    <a href="#" class="info-box-link">
+                        View Analytics                    </a>
+                </div>
+            </div>
+                        <div class="col-lg-3 col-md-6">
+                <div class="info-box bg-blue-system">
+                    <div class="info-box-inner">
+                        <div>
+                            <div class="info-box-text">Early Exits (30d)</div>
+                            <div class="info-box-number">0</div>
+                        </div>
+                        <div class="info-box-icon">⏱️</div>
+                    </div>
+                    <a href="#" class="info-box-link">
+                        View Analytics                    </a>
+                </div>
+            </div>
+                    </div>
+
+        <div class="row">
+            <div class="col-12">
+                <h3 class="chart-title">Employee Activity Chart</h3>
+                <div class="chart-widget">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        
+        // PHP data injected into JavaScript
+        const activityData = [0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+        
+        const labels = Array.from({length: 24}, (_, i) => {
+            if (i === 0) return '12 AM';
+            if (i === 12) return '12 PM';
+            return (i < 12) ? `${i} AM` : `${i - 12} PM`;
+        });
+
+        const performanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Clock Actions',
+                    data: activityData,
+                    backgroundColor: 'rgba(139, 0, 0, 0.7)', 
+                    borderColor: '#8b0000',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Hour of Day (Last 30 Days)',
+                            color: '#333'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Total Actions (In/Out)',
+                            color: '#333'
+                        },
+                        ticks: {
+                            stepSize: 1 
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false 
+                    },
+                    title: {
+                        display: true,
+                        text: 'Employee Activity Distribution',
+                        color: '#333',
+                        font: {
+                            size: 16
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>
