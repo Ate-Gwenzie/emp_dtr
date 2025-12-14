@@ -1,10 +1,8 @@
 <?php
-// Start session if not already started
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Redirect if an Admin or Employee is already logged in (They shouldn't be using 'forgot password')
 if (isset($_SESSION['admin_id'])) {
     header("Location: /emp_dtr/adminPage/adminMain.php");
     exit(); 
@@ -17,13 +15,11 @@ if (isset($_SESSION['employee_id'])) {
 ?>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-  /* Standard modern colors/styles */
   :root {
       --sys-red: #8b0000;
       --sys-red-light: #dc3545;
       --sys-yellow: #ffc107;
   }
-  /* Base Header Styles */
   .app-header {
     background-color: var(--sys-red);
     color: white;
@@ -50,21 +46,20 @@ if (isset($_SESSION['employee_id'])) {
       color: white; 
       text-decoration: none; 
       font-weight: 600;
-      padding: 8px 12px; /* Increased padding */
-      border: 1px solid var(--sys-yellow); /* Yellow border for modern look */
+      padding: 8px 12px;
+      border: 1px solid var(--sys-yellow);
       border-radius: 4px;
       transition: background-color 0.3s, color 0.3s, border-color 0.3s;
       display: inline-flex;
       align-items: center;
-      gap: 8px; /* Space between icon and text */
+      gap: 8px;
   }
   .app-header .nav-links a:hover {
       background-color: var(--sys-yellow);
-      color: var(--sys-red); /* Text color change on hover */
+      color: var(--sys-red); 
       border-color: var(--sys-yellow);
   }
   
-  /* SVG Icon styles */
   .icon-sm {
     width: 20px;
     height: 20px;
@@ -74,7 +69,6 @@ if (isset($_SESSION['employee_id'])) {
     vertical-align: middle;
   }
   
-  /* Mobile Responsiveness for a simple header */
   @media (max-width: 576px) {
       .app-header {
           flex-direction: column;
