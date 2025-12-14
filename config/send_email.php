@@ -10,19 +10,16 @@ function sendVerificationEmail($recipientEmail, $link) {
     try {
         // Server settings
         $mail->isSMTP();                                           
-        $mail->Host       = 'smtp.example.com'; // Set the SMTP server to send through
+        $mail->Host       = 'smtp.example.com'; 
         $mail->SMTPAuth   = true;                                   
-        $mail->Username   = 'your_smtp_username'; // SMTP username
-        $mail->Password   = 'your_smtp_password'; // SMTP password
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Use TLS encryption
-        $mail->Port       = 587;                                    // TCP port to connect to
-
-        // Recipients
+        $mail->Username   = 'thieshagwynethbagnaan@gmail.com'; 
+        $mail->Password   = 'dvdb yojr qabd uluz'; 
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         
+        $mail->Port       = 587;                                    
         $mail->setFrom('no-reply@yourdomain.com', 'Your Site Team');
         $mail->addAddress($recipientEmail);     
 
-        // Content
-        $mail->isHTML(true);                                  // Set email format to HTML
+        $mail->isHTML(true);                                 
         $mail->Subject = 'Verify Your Email Address';
         $mail->Body    = "
             <h1>Account Verification</h1>
@@ -35,7 +32,6 @@ function sendVerificationEmail($recipientEmail, $link) {
         $mail->send();
         return true;
     } catch (Exception $e) {
-        // Log the error for debugging (e.g., file_put_contents('error_log.txt', $e->getMessage()))
         return false;
     }
 }
