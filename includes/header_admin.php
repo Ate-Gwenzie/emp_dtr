@@ -4,7 +4,6 @@ require_once __DIR__ . '/../classes/notification.php';
 ?>
 <link rel="stylesheet" href="/emp_dtr/assets/css/app.css" />
 <style>
-  /* Standard modern colors/styles */
   :root {
       --sys-red: #8b0000;
       --sys-red-light: #dc3545;
@@ -18,7 +17,7 @@ require_once __DIR__ . '/../classes/notification.php';
     align-items: center;
     justify-content: space-between;
     box-shadow: 0 4px 6px rgba(0,0,0,0.08);
-    position: relative; /* For mobile dropdown positioning */
+    position: relative;
   }
   .app-header .brand { 
       font-weight: 700; 
@@ -37,8 +36,8 @@ require_once __DIR__ . '/../classes/notification.php';
       font-weight:600; 
       display: inline-flex; 
       align-items: center; 
-      padding: 5px 8px; /* Added padding */
-      border-radius: 4px; /* Soft edges */
+      padding: 5px 8px; 
+      border-radius: 4px; 
       transition: background-color 0.2s, color 0.2s;
   }
   .app-header .nav-links a:hover {
@@ -55,7 +54,6 @@ require_once __DIR__ . '/../classes/notification.php';
       color: var(--sys-red);
   }
   
-  /* SVG Icon styles */
   .icon-sm {
     width: 20px;
     height: 20px;
@@ -65,7 +63,7 @@ require_once __DIR__ . '/../classes/notification.php';
     vertical-align: middle;
   }
   .nav-toggle { 
-      display: none; /* Hide on desktop */
+      display: none;
       align-items: center;
       justify-content: center;
       background:none; 
@@ -82,12 +80,10 @@ require_once __DIR__ . '/../classes/notification.php';
   }
   .app-header .nav-links a .notif-count { display:inline-block; background:var(--sys-yellow); color:#000; font-weight:700; padding:2px 6px; border-radius:999px; font-size:0.8rem; margin-left:6px; }
 
-  /* Mobile Styles with Soft Dropdown */
   @media (max-width: 768px) {
-    .nav-toggle { display:flex } /* Show toggle button */
+    .nav-toggle { display:flex }
     
     .app-header .nav-links {
-        /* Mobile menu container setup */
         flex-direction: column;
         align-items: flex-start;
         position: absolute;
@@ -98,7 +94,6 @@ require_once __DIR__ . '/../classes/notification.php';
         width: 100%;
         display: flex; 
 
-        /* Animation properties */
         max-height: 0; 
         opacity: 0;
         padding: 0 20px; 
@@ -107,7 +102,7 @@ require_once __DIR__ . '/../classes/notification.php';
         z-index: 100;
     }
     .app-header .nav-links.show {
-        max-height: 350px; /* Adjust height based on content */
+        max-height: 350px;
         opacity: 1;
         padding-top: 10px;
         padding-bottom: 10px;
@@ -124,7 +119,7 @@ require_once __DIR__ . '/../classes/notification.php';
     }
     .app-header .nav-links a.logout-link {
          border: 1px solid var(--sys-yellow);
-         justify-content: center; /* Center logout button in mobile view */
+         justify-content: center; 
          margin-top: 5px;
     }
   }
@@ -204,7 +199,6 @@ require_once __DIR__ . '/../classes/notification.php';
       btn.setAttribute('aria-expanded', !expanded);
       nav.classList.toggle('show');
     });
-    // click outside to close
     document.addEventListener('click', function(e){
       if (!nav.contains(e.target) && !btn.contains(e.target)) {
         nav.classList.remove('show');
