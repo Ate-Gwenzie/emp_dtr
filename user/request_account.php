@@ -3,7 +3,6 @@ session_start();
 require_once __DIR__ . '/../classes/account_request.php';
 require_once __DIR__ . '/../classes/notification.php';
 require_once __DIR__ . '/../classes/admin.php';
-// NEW: Include the EmailSender class
 require_once __DIR__ . '/../classes/email_sender.php';
 
 if (empty($_SESSION['csrf_token'])) {
@@ -89,13 +88,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if ($req->save()) {
                 
-                // ADMIN NOTIFICATION LOGIC START
                 try {
                     $notifManager = new Notification();
                     $adminManager = new Admin();
                     $admins = $adminManager->viewAdmin();
                     
-                    // Build the detailed notification message
                     $schedule = '';
                     if ($type === 'employee') {
                         $schedule = "Shift Type: " . ucfirst(str_replace('_', ' ', $shift_type)) . "\n"
@@ -129,13 +126,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                           . "--------------------------------\n"
                                           . "\nAction Required: Please review this request in the Admin Panel.";
 
-                    // NEW: Email setup
                     $emailSender = new EmailSender();
                     $emailSubject = "ACTION REQUIRED: New Account Request Submitted";
                     
-                    // Notify all admins found (in-app AND via email)
                     foreach ($admins as $admin) {
-                        // 1. In-App Notification (Original logic)
                         $notifManager->recordNotification(
                             'admin', 
                             $admin['adid'], 
@@ -143,19 +137,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $notification_message
                         );
                         
-                        // 2. Email Notification (New logic)
                         $emailSender->sendEmail(
-                            $admin['email_ad'], // Admin's email address
+                            $admin['email_ad'], 
                             $emailSubject, 
-                            nl2br(htmlspecialchars($notification_message)), // HTML content
-                            $notification_message // Plain text content
+                            nl2br(htmlspecialchars($notification_message)), 
+                            $notification_message 
                         );
                     }
                 } catch (Exception $e) {
                     error_log("Failed to send admin notification for account request: " . $e->getMessage());
                 }
-                // ADMIN NOTIFICATION LOGIC END
-
+                
                 $_SESSION['request_status_message'] = 'Your request has been submitted. The admin will review it.';
                 header('Location: login.php');
                 exit();
