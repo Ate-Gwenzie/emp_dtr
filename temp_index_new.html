@@ -95,7 +95,6 @@
       btn.setAttribute('aria-expanded', !expanded);
       nav.classList.toggle('show');
     });
-    // click outside to close
     document.addEventListener('click', function(e){
       if (!nav.contains(e.target) && !btn.contains(e.target)) {
         nav.classList.remove('show');
