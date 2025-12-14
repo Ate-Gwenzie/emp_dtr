@@ -1,31 +1,25 @@
 <?php
-// Start session if not already started
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Redirect if an Admin is already logged in
 if (isset($_SESSION['admin_id'])) {
     header("Location: /emp_dtr/adminPage/adminMain.php");
-    exit(); // Only one exit needed
+    exit();
 }
-
-// Redirect if an Employee is already logged in
 if (isset($_SESSION['employee_id'])) {
     header("Location: /emp_dtr/employeePage/mainpage.php");
-    exit(); // Only one exit needed
+    exit(); 
 }
 ?>
 
 <link rel="stylesheet" href="/emp_dtr/assets/css/app.css" />
 <style>
-    /* Standard modern colors/styles */
     :root {
         --sys-red: #8b0000;
         --sys-red-light: #dc3545;
         --sys-yellow: #ffc107;
     }
-    /* Basic Public Header Styles */
     .app-header-public {
         background-color: var(--sys-red);
         color: white;
@@ -34,7 +28,7 @@ if (isset($_SESSION['employee_id'])) {
         align-items: center;
         justify-content: space-between;
         box-shadow: 0 4px 6px rgba(0,0,0,0.08);
-        position: relative; /* For mobile dropdown positioning */
+        position: relative;
     }
     .app-header-public .brand { 
         font-weight: 700; 
@@ -62,7 +56,7 @@ if (isset($_SESSION['employee_id'])) {
         padding: 5px 10px;
         border: 1px solid transparent;
         border-radius: 4px;
-        display: inline-flex; /* Enable icon alignment */
+        display: inline-flex; 
         align-items: center;
         gap: 4px;
     }
@@ -71,7 +65,6 @@ if (isset($_SESSION['employee_id'])) {
         border-color: var(--sys-yellow);
     }
     
-    /* SVG Icon styles */
     .icon-sm {
         width: 20px;
         height: 20px;
@@ -82,7 +75,7 @@ if (isset($_SESSION['employee_id'])) {
     }
     
     .nav-toggle { 
-        display: none; /* Hide on desktop */
+        display: none; 
         align-items: center;
         justify-content: center;
         background:none; 
@@ -98,12 +91,10 @@ if (isset($_SESSION['employee_id'])) {
         fill: none;
     }
 
-    /* Mobile Styles with Soft Dropdown */
     @media (max-width: 768px) {
-        .nav-toggle { display:flex } /* Show toggle button */
+        .nav-toggle { display:flex }
         
         .app-header-public .nav-links {
-            /* Mobile menu container setup */
             flex-direction: column;
             align-items: flex-start;
             position: absolute;
@@ -113,8 +104,6 @@ if (isset($_SESSION['employee_id'])) {
             border-top: 1px solid var(--sys-yellow);
             width: 100%;
             display: flex; 
-
-            /* Animation properties */
             max-height: 0; 
             opacity: 0;
             padding: 0 20px; 
@@ -169,7 +158,6 @@ if (isset($_SESSION['employee_id'])) {
       btn.setAttribute('aria-expanded', !expanded);
       nav.classList.toggle('show');
     });
-    // click outside to close
     document.addEventListener('click', function(e){
       if (!nav.contains(e.target) && !btn.contains(e.target)) {
         nav.classList.remove('show');
