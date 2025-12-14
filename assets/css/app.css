@@ -1,4 +1,4 @@
-/* Core app styles: header, brand, notifications, hero */
+
 :root{--sys-red:#8b0000;--sys-yellow:#ffc107}
 body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
 .app-header{background-color:var(--sys-red);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 6px rgba(0,0,0,0.08);position:relative}
@@ -24,13 +24,10 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
   .app-container{margin:16px 12px}
   .btn-main{width:100%}
 }
-/* Small utility styles referenced across pages */
 .main-logo{width:34px;height:34px;object-fit:contain;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,0.12)}
 .notif-badge{background:var(--sys-yellow);color:#000;padding:2px 6px;border-radius:999px;font-weight:700;font-size:0.8rem;margin-left:6px;display:inline-block}
 
-/* Minimal shared button styles so we can remove duplicates */
 .btn-primary,
 .btn-warning{border-radius:8px}
 
-/* Simple utility for content container */
 .content-wrapper{padding:20px}
